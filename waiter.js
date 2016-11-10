@@ -10,7 +10,7 @@ CollectionDriver = require('./collectionDriver').CollectionDriver;
 var app = express();
 app.set('port', process.env.PORT || 3000);
 
-var mongoHost = 'localHost';
+var mongoHost = 'localhost';
 var mongoPort = 27017; 
 var collectionDriver;
  
@@ -31,11 +31,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //Getting a list of beers according to the required filters
 app.get('/get', function (req, res) {
-	
+
 	//Fetching data
 	collectionDriver.get("beer", req.query, function(error, objs) {
 		if (error) { res.send(400, error); }
-		else { res.send(200, objs); }
+		else { 
+			objs.toArray(function (err, beers) {
+				res.send(200, beers);
+			});
+		}
 	});
 });
 
