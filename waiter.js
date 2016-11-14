@@ -5,14 +5,16 @@ var http = require('http'),
 
 MongoClient = require('mongodb').MongoClient,
 Server = require('mongodb').Server,
-CollectionDriver = require('./collectionDriver').CollectionDriver;
+BeerDriver = require('./beerDriver').BeerDriver;
+IpDriver = require('./ipDriver').IpDriver;
 
 var app = express();
 app.set('port', process.env.PORT || 3000);
 
 var mongoHost = 'localhost';
 var mongoPort = 27017; 
-var collectionDriver;
+var beerDriver;
+var ipDriver;
  
 //Starting the collection driver linked to our mongo database
 var mongoClient = new MongoClient(new Server(mongoHost, mongoPort));
@@ -22,9 +24,10 @@ mongoClient.open(function(err, mongoClient) {
 		process.exit(1);
 	}
 
+	//Fetching the beer database and both collection drivers
 	var db = mongoClient.db("beer");
-
-	collectionDriver = new CollectionDriver(db);
+	beerDriver = new BeerDriver(db);
+	ipDriver = new IpDriver(db);
 });
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -32,15 +35,24 @@ app.use(express.static(path.join(__dirname, 'public')));
 //Getting a list of beers according to the required filters
 app.get('/get', function (req, res) {
 
-	console.log('[' + new Date().toJSON() + '] GET request on /get from IP ' + req.headers['x-forwarded-for'] + ' with parameters ' + JSON.stringify(req.query));
+	var ip = req.connection.remoteAddress;
+
+	console.log(new Date().toJSON() + ' - [INFO] GET request on /get from IP ' + ip + ' with parameters ' + JSON.stringify(req.query));
 
 	//Fetching data
-	collectionDriver.get("beer", req.query, function(error, objs) {
+	beerDriver.get("beer", req.query, function(error, objs) {
 		if (error) { res.send(400, error); }
 		else { 
 			objs.toArray(function (err, beers) {
 				res.send(200, beers);
 			});
+		}
+	});
+
+	//Incrementing IP request count
+	ipDriver.increment("ip", ip, function(error) {
+		if (error) {
+			console.log(new Date().toJSON() + " - [ERROR] Error while incrementing request count for IP " + ip);
 		}
 	});
 });
