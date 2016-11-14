@@ -35,7 +35,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 //Getting a list of beers according to the required filters
 app.get('/get', function (req, res) {
 
-	var ip = req.connection.remoteAddress;
+	var ip = req.headers['x-forwarded-for'];
 
 	console.log(new Date().toJSON() + ' - [INFO] GET request on /get from IP ' + ip + ' with parameters ' + JSON.stringify(req.query));
 
