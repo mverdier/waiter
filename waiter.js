@@ -32,6 +32,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 //Getting a list of beers according to the required filters
 app.get('/get', function (req, res) {
 
+	console.log('GET request on /get from IP ' + req.connection.remoteAddress + ' with parameters ' + JSON.stringify(req.query));
+
 	//Fetching data
 	collectionDriver.get("beer", req.query, function(error, objs) {
 		if (error) { res.send(400, error); }
