@@ -11,7 +11,7 @@ IpDriver = require('./ipDriver').IpDriver;
 var app = express();
 app.set('port', process.env.PORT || 3000);
 
-var url = 'mongodb://localhost:27017/';
+var url = 'mongodb://localhost:27017/beer';
 var mongoHost = 'localhost';
 var mongoPort = 27017; 
 var beerDriver;
@@ -25,7 +25,6 @@ MongoClient.connect(url, function(err, db) {
 	}
 
 	//Fetching the beer database and both collection drivers
-	var db = mongoClient.db("beer");
 	beerDriver = new BeerDriver(db);
 	ipDriver = new IpDriver(db);
 });
