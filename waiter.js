@@ -3,7 +3,7 @@ var http = require('http'),
 	express = require('express'),
 	path = require('path');
 
-MongoClient = require('mongodb').MongoClient,
+var MongoClient = require('mongodb').MongoClient,
 Server = require('mongodb').Server,
 BeerDriver = require('./beerDriver').BeerDriver;
 IpDriver = require('./ipDriver').IpDriver;
@@ -11,15 +11,15 @@ IpDriver = require('./ipDriver').IpDriver;
 var app = express();
 app.set('port', process.env.PORT || 3000);
 
+var url = 'mongodb://localhost:27017/';
 var mongoHost = 'localhost';
 var mongoPort = 27017; 
 var beerDriver;
 var ipDriver;
- 
+
 //Starting the collection driver linked to our mongo database
-var mongoClient = new MongoClient(new Server(mongoHost, mongoPort));
-mongoClient.open(function(err, mongoClient) {
-	if (!mongoClient) {
+MongoClient.connect(url, function(err, db) {
+	if (!MongoClient) {
 		console.error("Error! Exiting... Must start MongoDB first");
 		process.exit(1);
 	}
