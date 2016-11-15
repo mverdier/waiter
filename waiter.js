@@ -51,7 +51,7 @@ app.get('/get', function (req, res) {
 	//Incrementing IP request count
 	ipDriver.increment("ip", ip, function(error) {
 		if (error) {
-			console.log(new Date().toJSON() + " - [ERROR] Error while incrementing request count for IP " + ip);
+			console.log(new Date().toJSON() + " - [ERROR] Error while incrementing request count for IP " + ip + ": " + error);
 		}
 	});
 });
