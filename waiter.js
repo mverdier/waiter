@@ -37,10 +37,13 @@ app.get('/get', function (req, res) {
 
 	var ip = req.headers['x-forwarded-for'];
 
-	console.log(new Date().toJSON() + ' - [INFO] GET request on /get from IP ' + ip + ' with parameters ' + JSON.stringify(req.query));
+	var params = req.query;
+	params["__proto__"] = null;
+
+	console.log(new Date().toJSON() + ' - [INFO] GET request on /get from IP ' + ip + ' with parameters ' + JSON.stringify(params));
 
 	//Fetching data
-	beerDriver.get("beer", req.query, function(error, objs) {
+	beerDriver.get("beer", params, function(error, objs) {
 		if (error) { res.send(400, error); }
 		else { 
 			objs.toArray(function (err, beers) {
